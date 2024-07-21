@@ -52,7 +52,7 @@ export default function ResultsPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Your Go-to-Market Strategy</h1>
       <MVPFeatures features={strategy.strategy?.mvpFeatures} />
-      {!email && <EmailCapture onSubmit={handleEmailSubmit} />}
+      {!email && <EmailCapture onSubmit={handleEmailSubmit} strategyId={id} />}
       {email && <GTMTabs strategyId={id} />}
     </div>
   );
