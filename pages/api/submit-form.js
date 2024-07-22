@@ -66,15 +66,12 @@ const response = await openai.createChatCompletion({
         targetMarket,
         problemDescription,
         strategy: {
-          mvpFeatures: {
-            coreFeatures: strategyData.MVPFeatures.CoreFeatures,
-            userFeedbackTools: strategyData.MVPFeatures.UserFeedbackTools
-          }
+          mvpFeatures: strategyData.MVPFeatures  // Store the entire MVPFeatures object
         }
       });
-
+      
       await strategy.save();
-
+      
       res.status(200).json({ success: true, strategyId: strategy._id, mvpFeatures: strategyData.MVPFeatures });
     } catch (error) {
       console.error('Error in submit-form:', error);

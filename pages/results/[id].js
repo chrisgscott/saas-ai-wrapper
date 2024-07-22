@@ -22,6 +22,7 @@ export default function ResultsPage() {
         })
         .then(data => {
           if (data.success) {
+            console.log('Fetched strategy:', data.data);  // Keep this log
             setStrategy(data.data);
           } else {
             throw new Error(data.error || 'Failed to fetch strategy');
@@ -33,12 +34,6 @@ export default function ResultsPage() {
         });
     }
   }, [id]);
-
-  const handleEmailSubmit = (submittedEmail) => {
-    // Here you would typically send this email to your backend
-    // For now, we'll just set it in the state
-    setEmail(submittedEmail);
-  };
 
   if (error) {
     return <div className="container mx-auto px-4 py-8">Error: {error}</div>;
@@ -52,7 +47,7 @@ export default function ResultsPage() {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Your Go-to-Market Strategy</h1>
       <MVPFeatures features={strategy.strategy?.mvpFeatures} />
-      {!email && <EmailCapture onSubmit={handleEmailSubmit} strategyId={id} />}
+      {!email && <EmailCapture onSubmit={setEmail} strategyId={id} />}
       {email && <GTMTabs strategyId={id} />}
     </div>
   );
