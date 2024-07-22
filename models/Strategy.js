@@ -5,6 +5,7 @@ const StrategySchema = new mongoose.Schema({
   ideaDescription: String,
   targetMarket: String,
   problemDescription: String,
+  email: String,
   strategy: {
     mvpFeatures: {
       coreFeatures: [String],
