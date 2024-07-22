@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { STRATEGY_SECTIONS } from '../constants';
 import IdealClient from './GTMSections/IdealClient';
 import PositioningStatements from './GTMSections/PositioningStatements';
 import PotentialPartners from './GTMSections/PotentialPartners';
@@ -6,14 +7,14 @@ import LaunchStrategies from './GTMSections/LaunchStrategies';
 import ContentMarketingPlan from './GTMSections/ContentMarketingPlan';
 import PostLaunchStrategies from './GTMSections/PostLaunchStrategies';
 
-const tabs = [
-  { name: 'Ideal Client', component: IdealClient },
-  { name: 'Positioning Statements', component: PositioningStatements },
-  { name: 'Potential Partners', component: PotentialPartners },
-  { name: 'Launch Strategies', component: LaunchStrategies },
-  { name: 'Content Marketing Plan', component: ContentMarketingPlan },
-  { name: 'Post-Launch Strategies', component: PostLaunchStrategies },
-];
+const componentMap = {
+  [STRATEGY_SECTIONS[1]]: IdealClient,
+  [STRATEGY_SECTIONS[2]]: PositioningStatements,
+  [STRATEGY_SECTIONS[3]]: PotentialPartners,
+  [STRATEGY_SECTIONS[4]]: LaunchStrategies,
+  [STRATEGY_SECTIONS[5]]: ContentMarketingPlan,
+  [STRATEGY_SECTIONS[6]]: PostLaunchStrategies,
+};
 
 export default function GTMTabs({ strategyId }) {
   const [activeTab, setActiveTab] = useState(0);
@@ -22,9 +23,9 @@ export default function GTMTabs({ strategyId }) {
     <div>
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-          {tabs.map((tab, index) => (
+          {STRATEGY_SECTIONS.slice(1).map((section, index) => (
             <button
-              key={tab.name}
+              key={section}
               className={`${
                 index === activeTab
                   ? 'border-indigo-500 text-indigo-600'
@@ -32,17 +33,20 @@ export default function GTMTabs({ strategyId }) {
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               onClick={() => setActiveTab(index)}
             >
-              {tab.name}
+              {section}
             </button>
           ))}
         </nav>
       </div>
       <div className="mt-4">
-        {tabs.map((tab, index) => (
-          <div key={tab.name} className={index === activeTab ? '' : 'hidden'}>
-            <tab.component strategyId={strategyId} />
-          </div>
-        ))}
+        {STRATEGY_SECTIONS.slice(1).map((section, index) => {
+          const Component = componentMap[section];
+          return (
+            <div key={section} className={index === activeTab ? '' : 'hidden'}>
+              <Component strategyId={strategyId} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

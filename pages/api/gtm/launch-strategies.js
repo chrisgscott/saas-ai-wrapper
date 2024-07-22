@@ -1,6 +1,8 @@
 import { Configuration, OpenAIApi } from 'openai';
 import dbConnect from '../../../lib/mongodb';
 import Strategy from '../../../models/Strategy';
+import config from '../../config';
+import { ERROR_MESSAGES } from '../../constants';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -39,15 +41,15 @@ Format the response as JSON, following this structure:
 }`;
 
       const response = await openai.createChatCompletion({
-        model: "gpt-3.5-turbo",
+        model: config.openai.model,
         messages: [
           { role: "system", content: "You are a helpful assistant that generates launch strategies for SaaS products." },
           { role: "user", content: prompt }
         ],
-        max_tokens: 1000,
+        max_tokens: config.openai.maxTokens,
         n: 1,
         stop: null,
-        temperature: 0.7,
+        temperature: config.openai.temperature,
       });
 
       let content = response.data.choices[0].message.content;
@@ -65,9 +67,9 @@ Format the response as JSON, following this structure:
       res.status(200).json({ success: true, launchStrategies: launchData.LaunchStrategies });
     } catch (error) {
       console.error('Error in launch-strategies:', error);
-      res.status(500).json({ success: false, error: error.message || 'An error occurred while processing your request.' });
+      res.status(500).json({ success: false, error: ERROR_MESSAGES.GENERAL_ERROR });
     }
   } else {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
+    res.status(405).json({ success: false, error: ERROR_MESSAGES.METHOD_NOT_ALLOWED });
   }
 }
