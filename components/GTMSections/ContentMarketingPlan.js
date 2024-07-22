@@ -26,16 +26,18 @@ export default function ContentMarketingPlan({ strategyId }) {
 
   if (loading) return <div>Loading content marketing plan...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!contentMarketingPlan) return <div>No content marketing plan available.</div>;
+  if (!contentMarketingPlan || contentMarketingPlan.length === 0) return <div>No content marketing plan available.</div>;
 
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Content Marketing Plan</h2>
-      <ul className="list-disc pl-6">
-        {contentMarketingPlan.map((item, index) => (
-          <li key={index} className="mb-2">{item}</li>
-        ))}
-      </ul>
+      {contentMarketingPlan.map((item, index) => (
+        <div key={index} className="mb-4">
+          <h3 className="text-xl font-semibold mb-2">{item.contentType}</h3>
+          <p><strong>Target Audience:</strong> {item.targetAudience}</p>
+          <p><strong>Expected Outcome:</strong> {item.expectedOutcome}</p>
+        </div>
+      ))}
     </div>
   );
 }

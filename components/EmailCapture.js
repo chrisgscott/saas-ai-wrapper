@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function EmailCapture({ onSubmit, strategyId }) {
+export default function EmailCapture({ onSubmit }) {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -11,24 +11,8 @@ export default function EmailCapture({ onSubmit, strategyId }) {
     setError(null);
 
     try {
-      const response = await fetch('/api/subscribe-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, strategyId }),
-      });
-
-      const data = await response.json();
-      console.log('API Response:', data);
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to subscribe email');
-      }
-
-      onSubmit(email);
+      await onSubmit(email);
     } catch (error) {
-      console.error('Error in EmailCapture:', error);
       setError(error.message);
     } finally {
       setIsLoading(false);

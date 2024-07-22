@@ -13,7 +13,6 @@ export default function ResultsPage() {
 
   useEffect(() => {
     if (id) {
-      console.log('Fetching strategy for ID:', id);
       fetch(`/api/strategy/${id}`)
         .then(response => {
           if (!response.ok) {
@@ -22,10 +21,11 @@ export default function ResultsPage() {
           return response.json();
         })
         .then(data => {
-          console.log('Received data:', data);
           if (data.success) {
             setStrategy(data.data);
-            console.log('Strategy set:', data.data);
+            if (data.data.email) {
+              setEmail(data.data.email);
+            }
           } else {
             throw new Error(data.error || 'Failed to fetch strategy');
           }
@@ -37,6 +37,27 @@ export default function ResultsPage() {
     }
   }, [id]);
 
+  const handleEmailSubmit = async (submittedEmail) => {
+    try {
+      const response = await fetch('/api/update-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ strategyId: id, email: submittedEmail }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update email');
+      }
+
+      setEmail(submittedEmail);
+    } catch (error) {
+      console.error('Error updating email:', error);
+      setError(error.message);
+    }
+  };
+
   if (error) {
     return <div className="container mx-auto px-4 py-8">Error: {error}</div>;
   }
@@ -45,13 +66,11 @@ export default function ResultsPage() {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
 
-  console.log('Rendering strategy:', strategy);
-
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Your Go-to-Market Strategy</h1>
-      <MVPFeatures features={strategy.strategy.mvpFeatures} />
-      {!email && <EmailCapture onSubmit={setEmail} strategyId={id} />}
+      <MVPFeatures features={strategy.strategy?.mvpFeatures} />
+      {!email && <EmailCapture onSubmit={handleEmailSubmit} strategyId={id} />}
       {email && <GTMTabs strategyId={id} />}
     </div>
   );
