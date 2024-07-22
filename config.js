@@ -5,7 +5,7 @@ const config = {
       temperature: 0.7,
     },
     mailerlite: {
-      groupId: 127510645768718219,
+      groupId: '127510645768718219', // Note the quotes around the ID
     },
     // Add other configuration categories as needed
   };

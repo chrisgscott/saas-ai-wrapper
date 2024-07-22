@@ -13,6 +13,7 @@ export default function ResultsPage() {
 
   useEffect(() => {
     if (id) {
+      console.log('Fetching strategy for ID:', id);
       fetch(`/api/strategy/${id}`)
         .then(response => {
           if (!response.ok) {
@@ -21,9 +22,10 @@ export default function ResultsPage() {
           return response.json();
         })
         .then(data => {
+          console.log('Received data:', data);
           if (data.success) {
-            console.log('Fetched strategy:', data.data);  // Keep this log
             setStrategy(data.data);
+            console.log('Strategy set:', data.data);
           } else {
             throw new Error(data.error || 'Failed to fetch strategy');
           }
@@ -43,10 +45,12 @@ export default function ResultsPage() {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
 
+  console.log('Rendering strategy:', strategy);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Your Go-to-Market Strategy</h1>
-      <MVPFeatures features={strategy.strategy?.mvpFeatures} />
+      <MVPFeatures features={strategy.strategy.mvpFeatures} />
       {!email && <EmailCapture onSubmit={setEmail} strategyId={id} />}
       {email && <GTMTabs strategyId={id} />}
     </div>

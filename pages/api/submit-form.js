@@ -2,7 +2,6 @@ import { Configuration, OpenAIApi } from 'openai';
 import dbConnect from '../../lib/mongodb';
 import Strategy from '../../models/Strategy';
 import config from '../../config';
-import { ERROR_MESSAGES } from '../../constants';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -40,25 +39,38 @@ Please format and structure the response as JSON, following this example structu
 
 Ensure that the features are comprehensive, detailed, and tailored to the specific SaaS idea and information provided. Do not include any markdown formatting in your response, just pure JSON.`;
 
-const response = await openai.createChatCompletion({
-  model: config.openai.model,
-  messages: [
-    { role: "system", content: "You are a helpful assistant that generates MVP features for SaaS products." },
-    { role: "user", content: prompt }
-  ],
-  max_tokens: config.openai.maxTokens,
-  n: 1,
-  stop: null,
-  temperature: config.openai.temperature,
-});
+      console.log('Sending request to OpenAI API with prompt:', prompt);
+
+      const response = await openai.createChatCompletion({
+        model: config.openai.model,
+        messages: [
+          { role: "system", content: "You are a helpful assistant that generates MVP features for SaaS products." },
+          { role: "user", content: prompt }
+        ],
+        max_tokens: config.openai.maxTokens,
+        n: 1,
+        stop: null,
+        temperature: config.openai.temperature,
+      });
+
+      console.log('Raw OpenAI API response:', JSON.stringify(response.data, null, 2));
 
       let content = response.data.choices[0].message.content;
+      console.log('Extracted content from OpenAI response:', content);
       
       // Remove any markdown formatting
       content = content.replace(/```json\n?|\n?```/g, '');
+      console.log('Content after removing markdown:', content);
 
       // Parse the cleaned JSON
-      const strategyData = JSON.parse(content);
+      let strategyData;
+      try {
+        strategyData = JSON.parse(content);
+        console.log('Parsed strategy data:', JSON.stringify(strategyData, null, 2));
+      } catch (parseError) {
+        console.error('Error parsing OpenAI response:', parseError);
+        throw new Error('Failed to parse OpenAI response as JSON');
+      }
 
       const strategy = new Strategy({
         industry,
@@ -66,18 +78,22 @@ const response = await openai.createChatCompletion({
         targetMarket,
         problemDescription,
         strategy: {
-          mvpFeatures: strategyData.MVPFeatures  // Store the entire MVPFeatures object
+          mvpFeatures: {
+            coreFeatures: strategyData.MVPFeatures.CoreFeatures,
+            userFeedbackTools: strategyData.MVPFeatures.UserFeedbackTools
+          }
         }
       });
-      
+
       await strategy.save();
-      
+      console.log('Saved strategy to database:', JSON.stringify(strategy, null, 2));
+
       res.status(200).json({ success: true, strategyId: strategy._id, mvpFeatures: strategyData.MVPFeatures });
     } catch (error) {
       console.error('Error in submit-form:', error);
-      res.status(500).json({ success: false, error: ERROR_MESSAGES.GENERAL_ERROR });
+      res.status(500).json({ success: false, error: error.message || 'An error occurred while processing your request.' });
     }
   } else {
-    res.status(405).json({ success: false, error: ERROR_MESSAGES.METHOD_NOT_ALLOWED });
+    res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 }

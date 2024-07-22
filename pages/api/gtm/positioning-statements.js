@@ -1,8 +1,8 @@
 import { Configuration, OpenAIApi } from 'openai';
 import dbConnect from '../../../lib/mongodb';
 import Strategy from '../../../models/Strategy';
-import config from '../../config';
-import { ERROR_MESSAGES } from '../../constants';
+import config from '../../../config';
+import { ERROR_MESSAGES } from '../../../constants';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
