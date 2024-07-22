@@ -8,6 +8,7 @@ export default function PositioningStatements({ strategyId }) {
   useEffect(() => {
     const fetchPositioningStatements = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`/api/gtm/positioning-statements?strategyId=${strategyId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch positioning statements');

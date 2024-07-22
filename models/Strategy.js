@@ -12,16 +12,16 @@ const StrategySchema = new mongoose.Schema({
       userFeedbackTools: [String]
     },
     idealClient: {
-      customerPersonas: [{
-        name: String,
-        demographics: {
-          age: String,
-          occupation: String
+      CustomerPersonas: [{
+        Name: String,
+        Demographics: {
+          Age: String,
+          Occupation: String
         },
-        behaviors: [String],
-        painPoints: [String]
+        Behaviors: [String],
+        PainPoints: [String]
       }],
-      insights: [String]
+      Insights: [String]
     },
     positioningStatements: [String],
     potentialPartners: [{

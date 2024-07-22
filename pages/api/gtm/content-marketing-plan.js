@@ -21,7 +21,7 @@ export default async function handler(req, res) {
         return res.status(404).json({ success: false, error: 'Strategy not found' });
       }
 
-      // Check if contentMarketingPlan already exists
+      // Check if content marketing plan already exists
       if (strategy.strategy.contentMarketingPlan && strategy.strategy.contentMarketingPlan.length > 0) {
         return res.status(200).json({ success: true, contentMarketingPlan: strategy.strategy.contentMarketingPlan });
       }

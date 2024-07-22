@@ -8,6 +8,7 @@ export default function ContentMarketingPlan({ strategyId }) {
   useEffect(() => {
     const fetchContentMarketingPlan = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`/api/gtm/content-marketing-plan?strategyId=${strategyId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch content marketing plan');

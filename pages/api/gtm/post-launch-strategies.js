@@ -21,6 +21,11 @@ export default async function handler(req, res) {
         return res.status(404).json({ success: false, error: 'Strategy not found' });
       }
 
+      // Check if post-launch strategies already exist
+      if (strategy.strategy.postLaunchStrategies && strategy.strategy.postLaunchStrategies.length > 0) {
+        return res.status(200).json({ success: true, postLaunchStrategies: strategy.strategy.postLaunchStrategies });
+      }
+
       const prompt = `Based on the following SaaS idea, create post-launch strategies:
 
 Industry: ${strategy.industry}
@@ -54,11 +59,26 @@ Format the response as JSON, following this structure:
 
       let content = response.data.choices[0].message.content;
       
-      // Remove any markdown formatting
+      // Remove any markdown formatting and clean the JSON
       content = content.replace(/```json\n?|\n?```/g, '');
+      content = content.replace(/\\n/g, '\\n')
+                       .replace(/\\'/g, "\\'")
+                       .replace(/\\"/g, '\\"')
+                       .replace(/\\&/g, '\\&')
+                       .replace(/\\r/g, '\\r')
+                       .replace(/\\t/g, '\\t')
+                       .replace(/\\b/g, '\\b')
+                       .replace(/\\f/g, '\\f');
 
       // Parse the cleaned JSON
-      const postLaunchData = JSON.parse(content);
+      let postLaunchData;
+      try {
+        postLaunchData = JSON.parse(content);
+      } catch (parseError) {
+        console.error('Error parsing JSON:', parseError);
+        console.log('Raw content:', content);
+        throw new Error('Failed to parse OpenAI response as JSON');
+      }
 
       // Update the strategy with the new post-launch strategies
       strategy.strategy.postLaunchStrategies = postLaunchData.PostLaunchStrategies;

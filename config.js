@@ -1,7 +1,7 @@
 const config = {
     openai: {
       model: 'gpt-4o-mini',
-      maxTokens: 500,
+      maxTokens: 4000,
       temperature: 0.7,
     },
     mailerlite: {

@@ -8,6 +8,7 @@ export default function PostLaunchStrategies({ strategyId }) {
   useEffect(() => {
     const fetchPostLaunchStrategies = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`/api/gtm/post-launch-strategies?strategyId=${strategyId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch post-launch strategies');
