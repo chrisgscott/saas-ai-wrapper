@@ -14,10 +14,8 @@ export default function IdealClient({ strategyId }) {
           throw new Error('Failed to fetch ideal client data');
         }
         const data = await response.json();
-        console.log('Fetched ideal client data:', data);
         setIdealClient(data.idealClient);
       } catch (err) {
-        console.error('Error fetching ideal client:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -29,7 +27,7 @@ export default function IdealClient({ strategyId }) {
 
   if (loading) return <div>Loading ideal client data...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!idealClient) return <div>No ideal client data available.</div>;
+  if (!idealClient || Object.keys(idealClient).length === 0) return <div>No ideal client data available.</div>;
 
   return (
     <div>
